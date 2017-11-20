@@ -1,3 +1,10 @@
+mnistplay/localization_data
+mnistplay/MNIST_data
+mnistplay/raw_mnist
+mnistplay/trainingset
+mnistplay/0
+mnistplay/0t
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
