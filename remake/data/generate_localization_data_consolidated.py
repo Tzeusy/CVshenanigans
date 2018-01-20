@@ -32,7 +32,7 @@ def make_file(data_type, label):
     filename = os.path.join(dst, data_type, "{}_{:04d}.png".format(label, i))
     cv2.imwrite(filename, generated_image)
 
-    return y,x
+    return y,x,h,w
 
 if __name__ == "__main__":
     random.seed(0)
@@ -46,11 +46,11 @@ if __name__ == "__main__":
         for label in map(str, range(10)):
             print(label)
             for i in range(int(DATA_SIZE * (1-TEST_SIZE))):
-                y,x = make_file(training, label)
-                f_training.write("{} {:04d} {} {}\n".format(label, i, y, x))
+                y,x,h,w = make_file(training, label)
+                f_training.write("{} {:04d} {} {}\n".format(label, i, y+h//2, x+w//2))
         
             for i in range(int(DATA_SIZE * TEST_SIZE)):
-                y,x = make_file(test, label)
-                f_test.write("{} {:04d} {} {}\n".format(label, i, y, x))
+                y,x,h,w = make_file(test, label)
+                f_test.write("{} {:04d} {} {}\n".format(label, i, y+h//2, x+w//2))
 
     print("{:.3f}s".format(time.time() - start_time))

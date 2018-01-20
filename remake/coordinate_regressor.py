@@ -5,8 +5,9 @@ import os
 
 def get_coordinates(image: np.ndarray, label=np.array([0,0]), display_result=True):
     # declaring parameter values
-    model_path = "./models/localization_regression/model.ckpt"
+    model_path = "./models/localization_regression_consolidated/model.ckpt"
     image_height, image_width = 280, 280
+    size = 28
     tf.reset_default_graph()
 
     # defining variables
@@ -77,7 +78,7 @@ def get_coordinates(image: np.ndarray, label=np.array([0,0]), display_result=Tru
 
     if display_result:
         image_copy = image.copy()
-        cv2.rectangle(image_copy, (_x,_y), (_x+28,_y+28), (255,255,255), 1)
+        cv2.rectangle(image_copy, (_x-size//2,_y-size//2), (_x+size//2,_y+size//2), (255,255,255), 1)
         cv2.imshow("Result", image_copy)
         cv2.waitKey(0)
         cv2.destroyAllWindows()

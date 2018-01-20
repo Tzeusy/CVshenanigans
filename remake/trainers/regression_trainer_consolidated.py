@@ -4,11 +4,11 @@ import os
 import beep
 
 # declaring parameter values
-model_path = "../models/localization_regression/model.ckpt"
+model_path = "../models/localization_regression_consolidated/model.ckpt"
 data_source = "../data/localization_data/consolidated/training_set"
 image_height, image_width = 280, 280
-num_iterations = 2000
 batch_size = 50
+num_iterations = 5000
 
 def get_dataset():
     # parsing data from file
@@ -37,7 +37,7 @@ def get_dataset():
     images = tf.constant(image_list)
     dataset = tf.data.Dataset.from_tensor_slices((images, labels))
     dataset = dataset.map(_parse_function)
-    #dataset = dataset.shuffle(buffer_size=10000)
+    dataset = dataset.shuffle(buffer_size=10000)
     dataset = dataset.repeat(-1)
 
     return dataset
@@ -113,9 +113,10 @@ with tf.Session() as sess:
         sess.run(train_step, feed_dict=feed_dict)
                 
         if i % 100 == 0:
-            print(sess.run(y_conv, feed_dict)[0], iteration[1][0])
+            print("{}/{}".format(i, num_iterations))
             print(accuracy.eval(feed_dict))
+            #print(sess.run(y_conv, feed_dict)[0], iteration[1][0])
             #print(sess.run(debug, feed_dict))
 
-    #file_path = saver.save(sess, model_path)
-    #print("Model saved in file:", file_path)
+    file_path = saver.save(sess, model_path)
+    print("Model saved in file:", file_path)
