@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import os
-import beep
+#import beep
 
 # declaring parameter values
 model_path = "../models/localization_regression_consolidated/model.ckpt"
@@ -37,7 +37,7 @@ def get_dataset():
     images = tf.constant(image_list)
     dataset = tf.data.Dataset.from_tensor_slices((images, labels))
     dataset = dataset.map(_parse_function)
-    dataset = dataset.shuffle(buffer_size=10000)
+    dataset = dataset.shuffle(buffer_size=8000)
     dataset = dataset.repeat(-1)
 
     return dataset
@@ -119,5 +119,5 @@ with tf.Session() as sess:
 
     file_path = saver.save(sess, model_path)
     print("Model saved in file:", file_path)
-beep.beep()
+#beep.beep()
 # 14

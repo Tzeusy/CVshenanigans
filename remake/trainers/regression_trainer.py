@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import os
-import beep
+#import beep
 
 # declaring parameter values
 model_path = "../models/localization_regression/model.ckpt"

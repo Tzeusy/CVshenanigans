@@ -78,25 +78,28 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 init = tf.global_variables_initializer()
 saver = tf.train.Saver()
 
+import time
+
 with tf.Session() as sess:
     sess.run(init)
 
     # log total accuracy
     accumulated_accuracy = 0
     iterations = 0
-    
+    start_time = time.time()
     for i in range(20000):
         batch = mnist.train.next_batch(50)
         feed_dict = {x: batch[0], y: batch[1], keep_prob: 0.5}
         
         train_step.run(feed_dict=feed_dict)
         if i%100 == 0:
-            train_accuracy = accuracy.eval(feed_dict=feed_dict)
+            train_accuracy = accuracy.eval(feed_dict={x:mnist.test.images,y:mnist.test.labels,keep_prob:1.0})
             print("step %d, training accuracy %g" % (i, train_accuracy))
-
+            
+        if i>10000:
             accumulated_accuracy+= train_accuracy
             iterations+= 1
 
-    print("Final accuracy:", accumulated_accuracy/iterations)
+    print("Final accuracy: %g percent in %g seconds" % (accumulated_accuracy/iterations,time.time()-start_time))
     saver.save(sess, model_path)
  
