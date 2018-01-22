@@ -24,7 +24,7 @@ def conv2d(x, W):
     return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding="SAME")
 
 def max_pool_2x2(x):
-    return tf.nn.max_pool(x, ksize=[1,4,4,1], strides=[1,2,2,1], padding="SAME")
+    return tf.nn.max_pool(x, ksize=[1,2,2,1], strides=[1,2,2,1], padding="SAME")
 
 # implementation of the first layer
 # compute 32 features for each 5x5 patch

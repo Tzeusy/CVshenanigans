@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import cv2
 
-def classify_images(images: np.ndarray):
+def classify_images(list_of_crops: np.ndarray):
     model_path = "./models/mnist_fc/model.ckpt"
     tf.reset_default_graph()
     
@@ -72,19 +72,18 @@ def classify_images(images: np.ndarray):
     init = tf.global_variables_initializer()
     saver = tf.train.Saver()
 
+    results = []
     with tf.Session() as sess:
         sess.run(init)
         saver.restore(sess, model_path)
+        for crops in list_of_crops:
+            labels = np.zeros((len(crops), 10))
+            feed_dict = {x: crops, y_: labels, keep_prob: 1.0}
 
-        labels = np.zeros((len(images), 10))
-        feed_dict = {x: images, y_: labels, keep_prob: 1.0}
+            res = sess.run(y_conv, feed_dict)
+            out = [(np.argmax(r), np.max(r)) for r in res] # grab the highest prediction for each image
+            result = max(out, key=lambda t: t[1]) # return the result of highest confidence
 
-        res = sess.run(y_conv, feed_dict)
-        out = [(np.argmax(r), np.max(r)) for r in res] # grab the highest prediction for each image
-        #out = [(i, sum(res[:,i])) for i in range(10)]
-        return max(out, key=lambda t: t[1]) # return the result of highest confidence
+            results.append(result)
 
-if __name__ == "__main__":
-    filename = "data/raw_mnist/0/0_0000.png"
-    image = cv2.imread(filename, 0).flatten()
-    print(classify_images([image, image]))
+    return results

@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import os
 
-def get_coordinates(image: np.ndarray, label=np.array([0,0]), display_result=True):
+def get_coordinates(images: np.ndarray):
     # declaring parameter values
     model_path = "./models/localization_regression_consolidated/model.ckpt"
     image_height, image_width = 280, 280
@@ -66,28 +66,20 @@ def get_coordinates(image: np.ndarray, label=np.array([0,0]), display_result=Tru
     init = tf.global_variables_initializer()
     saver = tf.train.Saver()
 
-    tf_image = image.reshape((image_height, image_width, 1))
+    tf_images = [image.reshape((image_height, image_width, 1)) for image in images]
+    labels = [np.array([0,0]) for i in range(len(images))]
 
     with tf.Session() as sess:
         sess.run(init)
         saver.restore(sess, model_path)
         
-        feed_dict = {x: [tf_image], y_: [label], keep_prob: 1.0}        
-        result = sess.run(y_conv, feed_dict)[0]
-        _y, _x = map(int, result)
-
-    if display_result:
-        image_copy = image.copy()
-        cv2.rectangle(image_copy, (_x-size//2,_y-size//2), (_x+size//2,_y+size//2), (255,255,255), 1)
-        cv2.imshow("Result", image_copy)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
-    return _x, _y
-
+        feed_dict = {x: tf_images, y_: labels, keep_prob: 1.0}        
+        result = sess.run(y_conv, feed_dict)
+        return [tuple(map(int, t)) for t in result]
+    
 if __name__ == "__main__":
     data_source = "./data/localization_data/distributed/test_set"
     data_path = os.path.join(data_source, "0")
     image_filename = os.path.join(data_path, "0_0000.png")
     image = cv2.imread(image_filename, 0)
-    print(get_coordinates(image))
+    print(get_coordinates([image, image]))
