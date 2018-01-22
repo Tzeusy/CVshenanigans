@@ -112,11 +112,12 @@ with tf.Session() as sess:
         feed_dict = {x: iteration[0], y_: iteration[1], keep_prob: 0.5}
         sess.run(train_step, feed_dict=feed_dict)
                 
-        if i % 100 == 0:
-            print("{}/{}".format(i, num_iterations))
-            print(accuracy.eval(feed_dict))
+        if (i+1) % 100 == 0:
+            print(i+1, accuracy.eval(feed_dict))
             #print(sess.run(y_conv, feed_dict)[0], iteration[1][0])
             #print(sess.run(debug, feed_dict))
 
     file_path = saver.save(sess, model_path)
     print("Model saved in file:", file_path)
+beep.beep()
+# 14
