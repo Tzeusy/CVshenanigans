@@ -76,7 +76,7 @@ correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 init = tf.global_variables_initializer()
-saver = tf.train.Saver()
+#saver = tf.train.Saver()
 
 import time
 
@@ -101,5 +101,5 @@ with tf.Session() as sess:
             iterations+= 1
 
     print("Final accuracy: %g percent in %g seconds" % (accumulated_accuracy/iterations,time.time()-start_time))
-    saver.save(sess, model_path)
+#    saver.save(sess, model_path)
  

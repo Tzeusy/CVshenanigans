@@ -58,11 +58,13 @@ def get_coordinates(images: np.ndarray):
 
     # loss function
     deviation = tf.reduce_mean(tf.abs(y_-y_conv))
-    train_step = tf.train.GradientDescentOptimizer(0.001).minimize(deviation)
+    train_step = tf.train.AdamOptimizer(1e-4).minimize(deviation)
 
-    correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-
+    xy_distances = tf.abs(y_-y_conv)
+    pixel_distance = tf.sqrt(tf.square(xy_distances[0])+tf.square(xy_distances[1]))
+    pixel_distance = tf.cast(pixel_distance,tf.float32)
+    accuracy = tf.reduce_mean(debug)
+    
     init = tf.global_variables_initializer()
     saver = tf.train.Saver()
 

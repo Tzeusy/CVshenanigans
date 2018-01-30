@@ -91,13 +91,13 @@ b_fc2 = bias_variable([2])
 y_conv = tf.matmul(h_fc1_drop,W_fc2)+b_fc2
 
 # loss function
-deviation = tf.reduce_mean(tf.abs(y_-y_conv))
+xy_distances = tf.abs(y_-y_conv)
+deviation = tf.reduce_mean(xy_distances)
 train_step = tf.train.AdamOptimizer(1e-4).minimize(deviation)
 
-xy_distances = tf.abs(y_-y_conv)
 pixel_distance = tf.sqrt(tf.square(xy_distances[0])+tf.square(xy_distances[1]))
 pixel_distance = tf.cast(pixel_distance,tf.float32)
-accuracy = tf.reduce_mean(debug)
+accuracy = tf.reduce_mean(pixel_distance)
 
 init = tf.global_variables_initializer()
 saver = tf.train.Saver()
