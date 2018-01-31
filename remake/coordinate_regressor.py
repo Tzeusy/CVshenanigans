@@ -18,13 +18,13 @@ def get_coordinates(images: np.ndarray):
     def bias_variable(shape):
         initial = tf.constant(0.1,shape=shape)
         return tf.Variable(initial)
-                            
+
     def conv2d(x,W):
         return tf.nn.conv2d(x,W,strides=[1,1,1,1],padding='SAME')
 
     def max_pool_2x2(x):
         return tf.nn.max_pool(x,ksize=[1,2,2,1],strides=[1,2,2,1],padding='SAME')
-        
+
     x = tf.placeholder(tf.float32, [None,280,280,1])
     y_= tf.placeholder(tf.float32,[None,2])
 
@@ -58,11 +58,13 @@ def get_coordinates(images: np.ndarray):
 
     # loss function
     deviation = tf.reduce_mean(tf.abs(y_-y_conv))
-    train_step = tf.train.GradientDescentOptimizer(0.001).minimize(deviation)
+    train_step = tf.train.AdamOptimizer(1e-4).minimize(deviation)
 
-    correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-
+    xy_distances = tf.abs(y_-y_conv)
+    pixel_distance = tf.sqrt(tf.square(xy_distances[0])+tf.square(xy_distances[1]))
+    pixel_distance = tf.cast(pixel_distance,tf.float32)
+    accuracy = tf.reduce_mean(debug)
+    
     init = tf.global_variables_initializer()
     saver = tf.train.Saver()
 
@@ -72,11 +74,11 @@ def get_coordinates(images: np.ndarray):
     with tf.Session() as sess:
         sess.run(init)
         saver.restore(sess, model_path)
-        
-        feed_dict = {x: tf_images, y_: labels, keep_prob: 1.0}        
+
+        feed_dict = {x: tf_images, y_: labels, keep_prob: 1.0}
         result = sess.run(y_conv, feed_dict)
         return [tuple(map(int, t)) for t in result]
-    
+
 if __name__ == "__main__":
     data_source = "./data/localization_data/distributed/test_set"
     data_path = os.path.join(data_source, "0")

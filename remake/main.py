@@ -14,7 +14,7 @@ def localize_and_classify(images: list):
     all_crops = []
     for i, image in enumerate(images):
         y, x = coordinates[i]
-        offsets = range(-14, 15)
+        offsets = range(-6, 6)
 
         crops = []
         for i in offsets:
@@ -34,8 +34,9 @@ if __name__ == "__main__":
         directory_name = os.path.join(data_source, i)
         files = filter(lambda f: f.endswith(".png"), os.listdir(directory_name))
         images = list(map(lambda f: cv2.imread(os.path.join(directory_name, f), 0), files))
-        
+
         results = localize_and_classify(images)
         counts = [results.count(i) for i in range(10)]
         print(i, counts, round(max(counts)/sum(counts), 5))
     beep.beep()
+
