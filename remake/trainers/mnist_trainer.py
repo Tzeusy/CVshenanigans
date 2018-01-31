@@ -24,7 +24,7 @@ def conv2d(x, W):
     return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding="SAME")
 
 def max_pool_2x2(x):
-    return tf.nn.max_pool(x, ksize=[1,2,2,1], strides=[1,2,2,1], padding="SAME")
+    return tf.nn.max_pool(x, ksize=[1,3,3,1], strides=[1,2,2,1], padding="SAME")
 
 # implementation of the first layer
 # compute 32 features for each 5x5 patch
@@ -93,13 +93,14 @@ with tf.Session() as sess:
         
         train_step.run(feed_dict=feed_dict)
         if i%100 == 0:
-            train_accuracy = accuracy.eval(feed_dict={x:mnist.test.images,y:mnist.test.labels,keep_prob:1.0})
-            print("step %d, training accuracy %g" % (i, train_accuracy))
-            
+            print(i)
+            #train_accuracy = accuracy.eval(feed_dict={x:mnist.test.images,y:mnist.test.labels,keep_prob:1.0})
+            #print("step %d, training accuracy %g" % (i, train_accuracy))
+        """
         if i>10000:
             accumulated_accuracy+= train_accuracy
             iterations+= 1
-
-    print("Final accuracy: %g percent in %g seconds" % (accumulated_accuracy/iterations,time.time()-start_time))
+        """
+    #print("Final accuracy: %g percent in %g seconds" % (accumulated_accuracy/iterations,time.time()-start_time))
     saver.save(sess, model_path)
  
