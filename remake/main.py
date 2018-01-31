@@ -21,10 +21,10 @@ def localize_and_classify(images: list):
             for j in offsets:
                 _y, _x = (y + i), (x + j)
                 crop = image[_y-size//2:_y+size//2, _x-size//2:_x+size//2]
-                crops.append(crop)
+                # ensure that the crop is a 28x28
+                if crop.shape == (size, size):
+                    crops.append(np.reshape(crop, (size, size, 1)))
 
-        crops = [crop.flatten() for crop in crops]
-        crops = [crop for crop in crops if crop.shape == (size*size,)]
         if len(crops) > 0 : all_crops.append(crops)
 
     return [pred for pred, logit in classify_images(all_crops)]
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         images = list(map(lambda f: cv2.imread(os.path.join(directory_name, f), 0), files))
 
         results = localize_and_classify(images)
-        counts = [results.count(i) for i in range(10)]
+        counts = [results.count(i) for i in range(11)]
         print(i, counts, round(max(counts)/sum(counts), 5))
     beep.beep()
 
