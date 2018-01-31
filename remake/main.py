@@ -1,10 +1,11 @@
 import numpy as np
 import cv2
 import os
+import beep
 from coordinate_regressor import get_coordinates
 from mnist_classifier import classify_images
 
-data_source = "./data/localization_data/distributed/training_set"
+data_source = "./data/localization_data/distributed/test_set"
 size = 28
 
 def localize_and_classify(images: list):
@@ -31,12 +32,11 @@ def localize_and_classify(images: list):
 if __name__ == "__main__":
     for i in map(str, range(10)):
         directory_name = os.path.join(data_source, i)
-        files = filter(lambda f: f.endswith(".png"), os.listdir(directory_name)[:1000])
+        files = filter(lambda f: f.endswith(".png"), os.listdir(directory_name))
         images = list(map(lambda f: cv2.imread(os.path.join(directory_name, f), 0), files))
 
         results = localize_and_classify(images)
         counts = [results.count(i) for i in range(10)]
-        print(i, counts, max(counts)/sum(counts))
+        print(i, counts, round(max(counts)/sum(counts), 5))
+    beep.beep()
 
-#        import beep
-#        beep.beep()
