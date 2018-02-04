@@ -4,7 +4,7 @@ import tensorflow as tf
 import os
 import time
 
-model_path = "../models/mnist_fc/model.ckpt"
+model_path = "../models/mnist_fc_with_null/model.ckpt"
 train_data_source = "../data/raw_mnist/jointTraining"
 test_data_source = "../data/raw_mnist/jointTest"
 image_height, image_width = 28, 28

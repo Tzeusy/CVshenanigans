@@ -8,6 +8,7 @@ remake/data/localization_data
 remake/data/raw_mnist
 remake/models
 remake/data/__pycache__/
+remake/utils/__pycache__/
 remake/__pycache__/
 
 # Windows image file caches
