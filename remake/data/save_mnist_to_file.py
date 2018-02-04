@@ -18,7 +18,7 @@ if __name__ == "__main__":
         dir_name = os.path.join(src, str(label))
         filename = os.path.join(src, str(label), "{}_{:04d}.png".format(label, len(os.listdir(dir_name))))
         imwrite(filename, img)
-        
+
         counter+=1
         if counter%1000 == 0:
             print(counter)

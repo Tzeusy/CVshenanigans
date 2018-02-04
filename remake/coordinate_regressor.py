@@ -64,7 +64,7 @@ def get_coordinates(images: np.ndarray):
     pixel_distance = tf.sqrt(tf.square(xy_distances[0])+tf.square(xy_distances[1]))
     pixel_distance = tf.cast(pixel_distance,tf.float32)
     accuracy = tf.reduce_mean(debug)
-    
+
     init = tf.global_variables_initializer()
     saver = tf.train.Saver()
 

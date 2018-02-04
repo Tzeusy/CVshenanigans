@@ -1,31 +1,34 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 13 17:29:42 2017
-
-@author: Tze
-"""
-
 import os
 import cv2
 import random
+import labelwriter as lw
 
 count=1
-for filename in os.listdir("./joint"):
-    if filename.endswith(".png"):
-        a = random.randrange(0,100)
-        img = cv2.imread("./joint/"+filename,0)
-        if(a<=79):
-            cv2.imwrite('./jointTraining/'+filename,img)
+
+data_dir = "./raw_mnist/joint"
+
+def split_files(data_directory = data_dir):
+    training_dir = data_directory+"/training/"
+    testing_dir = data_directory+"/testing/"
+    if not os.path.exists(training_dir):
+        os.makedirs(training_dir)
+    if not os.path.exists(testing_dir):
+        os.makedirs(testing_dir)
+    for filename in os.listdir(data_directory):
+        if filename.endswith(".png"):
+            #0 for grayscale, 1 for color, -1 for unchanged (eg. alpha if png)
+            #Can also use copy (see filemerger.py), but this implementation (while a bit slower)
+            #allows you to convert file being read to specified file format
+            img = cv2.imread(data_directory+"/"+filename,0)
+            if(random.randrange(0,100)<=79):
+                cv2.imwrite(training_dir+filename,img)
+            else:
+                cv2.imwrite(testing_dir+filename,img)
         else:
-            cv2.imwrite('./jointTest/'+filename,img)
-        print(filename)
-#        img = cv2.imread(filename,0)
-#        print(img.shape)
-#        crop_img = img[160:272, -485:-100] # Crop from x, y, w, h -> 100, 200, 300, 400
-#        cv2.imshow('wat',crop_img)
-#        a = cv2.waitKey(0)
-#        print(a)
-#        count+=1
-        continue
-    else:
-        continue
+            continue
+    lw.write_labels_on_first_char(data_dir+"/training")
+    lw.write_labels_on_first_char(data_dir+"/testing")
+
+if __name__=="__main__":
+    split_files()
