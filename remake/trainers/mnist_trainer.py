@@ -3,6 +3,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets("MNIST_data", one_hot=True)
 
 import tensorflow as tf
+import time
 
 model_path = "../models/mnist_fc/model.ckpt"
 
@@ -24,7 +25,7 @@ def conv2d(x, W):
     return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding="SAME")
 
 def max_pool_2x2(x):
-    return tf.nn.max_pool(x, ksize=[1,3,3,1], strides=[1,2,2,1], padding="SAME")
+    return tf.nn.max_pool(x, ksize=[1,2,2,1], strides=[1,2,2,1], padding="SAME")
 
 # implementation of the first layer
 # compute 32 features for each 5x5 patch
@@ -78,23 +79,21 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 init = tf.global_variables_initializer()
 #saver = tf.train.Saver()
 
-import time
-
 with tf.Session() as sess:
     sess.run(init)
-
     # log total accuracy
-    accumulated_accuracy = 0
-    iterations = 0
+    # accumulated_accuracy = 0
+    # iterations = 0
     start_time = time.time()
     for i in range(20000):
         batch = mnist.train.next_batch(50)
         feed_dict = {x: batch[0], y: batch[1], keep_prob: 0.5}
-        
         train_step.run(feed_dict=feed_dict)
+        testbatch = mnist.test.next_batch(5000)
         if i%100 == 0:
             print(i)
-            train_accuracy = accuracy.eval(feed_dict={x:mnist.test.images,y:mnist.test.labels,keep_prob:1.0})
+            # train_accuracy = accuracy.eval(feed_dict={x:mnist.test.images,y:mnist.test.labels,keep_prob:1.0})
+            train_accuracy = accuracy.eval(feed_dict={x:testbatch[0],y:testbatch[1],keep_prob:1.0})
             print("step %d, training accuracy %g" % (i, train_accuracy))
         """
         if i>10000:
@@ -103,5 +102,3 @@ with tf.Session() as sess:
         """
     #print("Final accuracy: %g percent in %g seconds" % (accumulated_accuracy/iterations,time.time()-start_time))
     saver.save(sess, model_path)
-
- 

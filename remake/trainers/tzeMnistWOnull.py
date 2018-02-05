@@ -29,7 +29,7 @@ def get_dataset(data_source):
             t = line.rstrip().split(',')
             filename, value = map(labelToInt, t)
             coord_labels.append(value)
-            
+
     depth = tf.constant(10)
     one_hot_encoded = tf.one_hot(indices=coord_labels, depth=depth)
 
@@ -51,17 +51,17 @@ def get_dataset(data_source):
     images = tf.constant(image_list)
     dataset = tf.data.Dataset.from_tensor_slices((images, labels))
     dataset = dataset.map(_parse_function)
-    dataset = dataset.shuffle(buffer_size=30000)
+    dataset = dataset.shuffle(buffer_size=23000)
     dataset = dataset.repeat()
-    
+
     return dataset
 
 #v = get_mnist_classification_variables()
 #x, y, keep_prob = v["x"], v["y"], v["keep_prob"]
 #y_conv, train_step, accuracy = v["y_conv"], v["train_step"], v["accuracy"]
 
-x = tf.placeholder(tf.float32, shape=[None, 28,28,1])
-y = tf.placeholder(tf.float32, shape=[None, 10])
+x = tf.placeholder(tf.float32, shape=[None,28,28,1])
+y = tf.placeholder(tf.float32, shape=[None,10])
 
 # here we begin creation of a new model, involving cnn
 # weights are initialized with a small amount of noise to break symmetry, and prevent 0 gradients
@@ -122,8 +122,8 @@ train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-trainData = get_dataset(train_data_source).batch(100)
-testData = get_dataset(test_data_source).batch(100)
+trainData = get_dataset(train_data_source).batch(50)
+testData = get_dataset(test_data_source).batch(5000)
 
 # create TensorFlow Iterator object
 trainIterator = trainData.make_initializable_iterator()
@@ -139,20 +139,25 @@ with tf.Session() as sess:
     sess.run(init)
     sess.run(trainIterator.initializer)
     sess.run(testIterator.initializer)
-    cyclingCounter=0
-    movingAverage=np.zeros(10)
-    for i in range(10000):
-        if not i%50:
+    # cyclingCounter=0
+    # movingAverage=np.zeros(10)
+    testIteration = sess.run(nextTest)
+    testDict = {x: testIteration[0],y:testIteration[1],keep_prob:1}
+
+    for i in range(num_iterations):
+        if not i%500:
             print("Step {}".format(i))
-            testIteration = sess.run(nextTest)
-            testDict = {x: testIteration[0],y:testIteration[1],keep_prob:1}
             acc = sess.run(accuracy,feed_dict=testDict)
-            movingAverage[cyclingCounter]=acc
-            cyclingCounter+=1
-            if cyclingCounter>9:
-                cyclingCounter=0
-            totalAverage = sum(movingAverage)/10
-            print("Accuracy is {}".format(totalAverage))
+            # movingAverage[cyclingCounter]=acc
+            # cyclingCounter+=1
+            # if cyclingCounter>9:
+            #     cyclingCounter=0
+            # totalAverage = sum(movingAverage)/10
+            print("Accuracy is {}".format(acc))
+        ## Use this is if you want to shuffle your testset
+        # if not i%3000:
+        #     testIteration = sess.run(nextTest)
+        #     testDict = {x: testIteration[0],y:testIteration[1],keep_prob:1}
         iteration = sess.run(nextTrain)
 #        print(iteration[1])
         feedDictionary = {x: iteration[0], y: iteration[1], keep_prob:0.5}
