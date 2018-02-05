@@ -94,8 +94,8 @@ with tf.Session() as sess:
         train_step.run(feed_dict=feed_dict)
         if i%100 == 0:
             print(i)
-            #train_accuracy = accuracy.eval(feed_dict={x:mnist.test.images,y:mnist.test.labels,keep_prob:1.0})
-            #print("step %d, training accuracy %g" % (i, train_accuracy))
+            train_accuracy = accuracy.eval(feed_dict={x:mnist.test.images,y:mnist.test.labels,keep_prob:1.0})
+            print("step %d, training accuracy %g" % (i, train_accuracy))
         """
         if i>10000:
             accumulated_accuracy+= train_accuracy

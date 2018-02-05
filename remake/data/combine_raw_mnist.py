@@ -13,6 +13,8 @@ def create_folders():
 
 def merge_all_images():
     for folder in os.listdir(root):
+        if(folder==joint or folder==joint_training or folder==joint_test or folder=="null"):
+            continue
         folder_name = os.path.join(root, folder)
         for image in os.listdir(folder_name):
             src_path = os.path.join(folder_name, image)
@@ -46,7 +48,7 @@ def write_label(folder_name):
         for filename in os.listdir(folder_name):
             if not filename.endswith(".png"):
                 continue
-            f.write("{}, {}\n".format(filename, filename[0]))
+            f.write("{},{}\n".format(filename, filename[0]))
 
 create_folders()
 merge_all_images()
