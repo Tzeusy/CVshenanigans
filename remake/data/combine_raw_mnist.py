@@ -13,7 +13,7 @@ def create_folders():
 
 def merge_all_images():
     for folder in os.listdir(root):
-        if(folder==joint or folder==joint_training or folder==joint_test or folder=="null"):
+        if(folder==joint or folder==joint_training or folder==joint_test):
             continue
         folder_name = os.path.join(root, folder)
         for image in os.listdir(folder_name):
@@ -21,11 +21,11 @@ def merge_all_images():
             dst_path = os.path.join(root, joint, image)
             copyfile(src_path, dst_path)
 
-            
+
 def train_test_split(test_size=0.2):
     src_folder = os.path.join(root, joint)
     image_files = list(filter(lambda f: f.endswith(".png"), os.listdir(src_folder)))
-    
+
     random.shuffle(image_files)
 
     n = int(len(image_files) * test_size)

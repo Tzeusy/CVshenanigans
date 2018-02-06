@@ -47,7 +47,7 @@ h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
 h_pool2 = max_pool_2x2(h_conv2) # 7x7
 
 # implementation of fully-connected layer with 1024 neurons - this processes based on the entire image
-W_fc1 = weight_variable([7*7 * 64, 1024]) # 64 layers of 7x7 image
+W_fc1 = weight_variable([7*7*64,1024]) # 64 layers of 7x7 image
 b_fc1 = bias_variable([1024])
 
 h_pool2_flat = tf.reshape(h_pool2, [-1,7*7*64]) # flatten the image into a single line
@@ -59,7 +59,7 @@ keep_prob = tf.placeholder(tf.float32)
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
 # layer for softmax
-W_fc2 = weight_variable([1024, 10])
+W_fc2 = weight_variable([1024,10])
 b_fc2 = bias_variable([10])
 
 y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
