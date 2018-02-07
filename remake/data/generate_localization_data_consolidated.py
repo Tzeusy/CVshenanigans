@@ -9,7 +9,7 @@ dst = "localization_data/consolidated"
 training = "training_set"
 test = "test_set"
 
-DATA_SIZE = 2000
+DATA_SIZE = 4000
 TEST_SIZE = 0.2
 
 BASE_WIDTH = 280
@@ -37,7 +37,7 @@ def make_file(data_type, label):
 if __name__ == "__main__":
     random.seed(0)
     start_time = time.time()
-    
+
     initialize_folders()
 
     training_filename = os.path.join(dst, training, "label.txt")
@@ -48,7 +48,7 @@ if __name__ == "__main__":
             for i in range(int(DATA_SIZE * (1-TEST_SIZE))):
                 y,x,h,w = make_file(training, label)
                 f_training.write("{} {:04d} {} {}\n".format(label, i, y+h//2, x+w//2))
-        
+
             for i in range(int(DATA_SIZE * TEST_SIZE)):
                 y,x,h,w = make_file(test, label)
                 f_test.write("{} {:04d} {} {}\n".format(label, i, y+h//2, x+w//2))

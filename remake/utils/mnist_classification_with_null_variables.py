@@ -41,7 +41,7 @@ def get_mnist_classification_variables():
     h_pool2 = max_pool_2x2(h_conv2) # 7x7
 
     # implementation of fully-connected layer with 1024 neurons - this processes based on the entire image
-    W_fc1 = weight_variable([7*7 * 64, 1024]) # 64 layers of 7x7 image
+    W_fc1 = weight_variable([7*7*64,1024]) # 64 layers of 7x7 image
     b_fc1 = bias_variable([1024])
 
     h_pool2_flat = tf.reshape(h_pool2, [-1,7*7*64]) # flatten the image into a single line

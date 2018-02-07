@@ -4,10 +4,11 @@ import cv2
 import sys
 
 sys.path.append("utils/")
-from mnist_classification_without_null_variables import get_mnist_classification_variables
+# from mnist_classification_without_null_variables import get_mnist_classification_variables
+from mnist_classification_with_null_variables import get_mnist_classification_variables
 
 def classify_images(list_of_crops: np.ndarray):
-    model_path = "./models/mnist_fc_without_null/model.ckpt"
+    model_path = "./models/mnist_fc/model.ckpt"
     tf.reset_default_graph()
 
     v = get_mnist_classification_variables()
@@ -27,17 +28,17 @@ def classify_images(list_of_crops: np.ndarray):
             feed_dict = {x: crops, y: labels, keep_prob: 1.0}
 
             res = sess.run(y_conv, feed_dict)
-            """
+
             out = [(np.argmax(r), np.max(r)) for r in res]
             result = max(out, key=lambda t: t[1])
 
             results.append(result)
-            """
-            res_softmax = sess.run(tf.nn.softmax(res)) # softmax to get the probabilities
-            sum_of_confidences = np.sum(res_softmax, axis=0) # sum up the probabilities across crops
-            
-            results.append((np.argmax(sum_of_confidences), np.max(sum_of_confidences)))
-            
+
+            # res_softmax = sess.run(tf.nn.softmax(res)) # softmax to get the probabilities
+            # sum_of_confidences = np.sum(res_softmax, axis=0) # sum up the probabilities across crops
+            #
+            # results.append((np.argmax(sum_of_confidences), np.max(sum_of_confidences)))
+
 
     return results
 

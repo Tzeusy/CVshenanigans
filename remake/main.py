@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import os
-import beep
+# import beep
 from coordinate_regressor import get_coordinates
 from mnist_classifier import classify_images
 
@@ -38,5 +38,4 @@ if __name__ == "__main__":
         results = localize_and_classify(images)
         counts = [results.count(i) for i in range(11)]
         print(i, counts, round(max(counts)/sum(counts), 5))
-    beep.beep()
-
+    # beep.beep()

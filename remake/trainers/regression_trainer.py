@@ -66,12 +66,15 @@ with tf.Session() as sess:
     train_iterator = train_batched_dataset.make_initializable_iterator()
     train_next_element = train_iterator.get_next()
 
-    test_batched_dataset = test_dataset.batch(batch_size)
+    test_batched_dataset = test_dataset.batch(500)
     test_iterator = test_batched_dataset.make_initializable_iterator()
     test_next_element = test_iterator.get_next()
 
     sess.run(train_iterator.initializer)
     sess.run(test_iterator.initializer)
+
+    test_iteration = sess.run(test_next_element)
+    test_feed_dict = {x: test_iteration[0], y_:test_iteration[1], keep_prob:1}
 
     for i in range(num_iterations):
         train_iteration = sess.run(train_next_element)
@@ -79,12 +82,12 @@ with tf.Session() as sess:
         sess.run(train_step, feed_dict=train_feed_dict)
 
         if (i+1) % 100 == 0:
+            print(i+1, accuracy.eval(test_feed_dict))
+
+        if (i+1) % 1000 == 0:
             test_iteration = sess.run(test_next_element)
             test_feed_dict = {x: test_iteration[0], y_:test_iteration[1], keep_prob:1}
-            print(i+1, pixel_distance.eval(test_feed_dict))
 
     file_path = saver.save(sess, model_path)
     print("Model saved in file:", file_path)
     print("Time elapsed: ", time.time()-start_time)
-#beep.beep()
-# 14
