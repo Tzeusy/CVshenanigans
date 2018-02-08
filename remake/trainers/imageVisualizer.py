@@ -19,3 +19,15 @@ def show_image_with_crosshairs(imageTensor,tfPred):
     else:
         cv2.waitKey(0)
     return
+
+def show_small_image(imageTensor):
+    try:
+        imageDir = imageTensor[2][0].decode('ascii')
+        imageToShow = cv2.imread(imageDir)
+        cv2.imshow("Current Image",imageToShow)
+        cv2.waitKey(0)
+    except:
+        with tf.Session() as sess:
+            imageNumpyArr = imageTensor[0][0]
+            cv2.imshow("lol",imageNumpyArr)
+            cv2.waitKey(0)
