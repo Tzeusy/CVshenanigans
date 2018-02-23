@@ -6,23 +6,25 @@ import time
 import numpy as np
 from tensorflow.contrib.data import Dataset, Iterator
 
-sys.path.append("../utils/")
-
 model_path = "../models/mnist_fc/model.ckpt"
-# model_path = "../models/mnist_fc_without_null/model.ckpt"
 train_data_source = "../data/raw_mnist/jointTraining"
 test_data_source = "../data/raw_mnist/jointTest"
+
+model_path = "../models/crops/model.ckpt"
+train_data_source = "../data/crops/training_set"
+test_data_source = "../data/crops/test_set"
+
 image_height, image_width = 28, 28
 batch_size = 50
 num_iterations = 30000
 #change to 11 for noNull
-num_labels = 11
+num_labels = 10
 
 def labelToInt(x):
     try:
         return int(x)
     except:
-        return(10)
+        return 10
 
 def get_dataset(data_source):
     # parsing data from file
@@ -47,7 +49,8 @@ def get_dataset(data_source):
         image_string = tf.read_file(filename)
         image_decoded = tf.image.decode_png(image_string, channels=1)
         image_resized = tf.image.resize_images(image_decoded, [image_height,image_width])
-        return image_resized, label
+        image_standardized = tf.image.per_image_standardization(image_resized)
+        return image_standardized, label
 
     labels = one_hot_encoded
     images = tf.constant(image_list)
@@ -57,10 +60,6 @@ def get_dataset(data_source):
     dataset = dataset.repeat()
 
     return dataset
-
-#v = get_mnist_classification_variables()
-#x, y, keep_prob = v["x"], v["y"], v["keep_prob"]
-#y_conv, train_step, accuracy = v["y_conv"], v["train_step"], v["accuracy"]
 
 x = tf.placeholder(tf.float32, shape=[None,28,28,1])
 y = tf.placeholder(tf.float32, shape=[None,num_labels])
@@ -113,8 +112,8 @@ keep_prob = tf.placeholder(tf.float32)
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
 # layer for softmax
-W_fc2 = weight_variable([1024,11])
-b_fc2 = bias_variable([11])
+W_fc2 = weight_variable([1024,num_labels])
+b_fc2 = bias_variable([num_labels])
 
 y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
 
@@ -141,14 +140,13 @@ start_time = time.time()
 
 saver = tf.train.Saver()
 with tf.Session() as sess:
-    init = tf.global_variables_initializer()
-    sess.run(init)
+    sess.run(tf.global_variables_initializer())
     sess.run(trainIterator.initializer)
     sess.run(testIterator.initializer)
     # cyclingCounter=0
     # movingAverage=np.zeros(10)
     testIteration = sess.run(nextTest)
-    testDict = {x: testIteration[0],y:testIteration[1],keep_prob:1}
+    testDict = {x: testIteration[0], y: testIteration[1], keep_prob: 1}
 
     for i in range(num_iterations):
         if not i%500:

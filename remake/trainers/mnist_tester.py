@@ -81,24 +81,14 @@ saver = tf.train.Saver()
 
 with tf.Session() as sess:
     sess.run(init)
-    # log total accuracy
-    # accumulated_accuracy = 0
-    # iterations = 0
-    start_time = time.time()
-    for i in range(20000):
-        batch = mnist.train.next_batch(50)
-        feed_dict = {x: batch[0], y: batch[1], keep_prob: 0.5}
-        train_step.run(feed_dict=feed_dict)
-        testbatch = mnist.test.next_batch(5000)
-        if i%100 == 0:
-            print(i)
-            # train_accuracy = accuracy.eval(feed_dict={x:mnist.test.images,y:mnist.test.labels,keep_prob:1.0})
-            train_accuracy = accuracy.eval(feed_dict={x:testbatch[0],y:testbatch[1],keep_prob:1.0})
-            print("step %d, training accuracy %g" % (i, train_accuracy))
-        """
-        if i>10000:
-            accumulated_accuracy+= train_accuracy
-            iterations+= 1
-        """
-    #print("Final accuracy: %g percent in %g seconds" % (accumulated_accuracy/iterations,time.time()-start_time))
-    saver.save(sess, model_path)
+    saver.restore(sess, model_path)
+
+    batch_size = 1000
+    num_iterations = mnist.test.num_examples//batch_size
+    total_accuracy = 0.
+    for i in range(num_iterations):
+        batch = mnist.test.next_batch(batch_size)
+        feed_dict = {x: batch[0], y: batch[1], keep_prob: 1.0}
+        total_accuracy+= accuracy.eval(feed_dict)
+    print(total_accuracy/num_iterations) # 0.9922999978065491
+input()
