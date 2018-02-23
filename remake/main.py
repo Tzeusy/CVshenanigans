@@ -4,6 +4,7 @@ import os
 # import beep
 from coordinate_regressor import get_coordinates
 from mnist_classifier import classify_images
+os.environ['TF_CPP_MIN_LOG_LEVEL']='3'
 
 data_source = "./data/localization_data/distributed/test_set"
 size = 28
@@ -14,7 +15,7 @@ def localize_and_classify(images: list):
     all_crops = []
     for i, image in enumerate(images):
         y, x = coordinates[i]
-        offsets = range(-6, 6)
+        offsets = range(-10, 10)
 
         crops = []
         for i in offsets:
