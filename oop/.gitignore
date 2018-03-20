@@ -1,0 +1,6 @@
+data/__pycache__
+data/localization
+data/mnist/test
+data/mnist/train
+models
+

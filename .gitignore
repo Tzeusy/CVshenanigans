@@ -11,6 +11,10 @@ modelplay/data/mnist/test
 modelplay/data/mnist/train
 modelplay/models/*
 
+# pycharm folders
+.idea
+venv
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
