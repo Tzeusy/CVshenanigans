@@ -25,7 +25,7 @@ def get_dataset(data_source):
             label, index, y, x = map(int, t)
             coord_labels.append((y, x))
 
-    image_list = []
+        image_list = []
     for file in os.listdir(data_source):
         if file.endswith(".png"):
             image_list.append(os.path.join(data_source, file))

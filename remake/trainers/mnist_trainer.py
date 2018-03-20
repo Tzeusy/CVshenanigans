@@ -85,7 +85,7 @@ with tf.Session() as sess:
     # accumulated_accuracy = 0
     # iterations = 0
     start_time = time.time()
-    for i in range(20000):
+    for i in range(20000)
         batch = mnist.train.next_batch(50)
         feed_dict = {x: batch[0], y: batch[1], keep_prob: 0.5}
         train_step.run(feed_dict=feed_dict)

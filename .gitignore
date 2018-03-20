@@ -1,15 +1,15 @@
-mnistplay/localization_data
-mnistplay/MNIST_data
-mnistplay/raw_mnist
-mnistplay/trainingset
-mnistplay/0
-mnistplay/0t
+*/__pycache__
+*/*/__pycache__
+*/*/*/__pycache__
 remake/data/localization_data
 remake/data/raw_mnist
+remake/data/crops
 remake/models
-remake/data/__pycache__/
-remake/utils/__pycache__/
-remake/__pycache__/
+
+modelplay/data/localization
+modelplay/data/mnist/test
+modelplay/data/mnist/train
+modelplay/models/*
 
 # Windows image file caches
 Thumbs.db
