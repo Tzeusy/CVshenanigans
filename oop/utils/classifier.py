@@ -1,9 +1,9 @@
 import tensorflow as tf
-from variables import Variable as v
+from cnn import CNN
 from dataset import Dataset
 
-class Classifier(object):
 
+class Classifier(CNN):
     def __init__(self, size=28, num_channels=1, num_classes=10):
         self.x = tf.placeholder(tf.float32, shape=[None, size, size, num_channels])
         self.y = tf.placeholder(tf.float32, shape=[None, num_classes])
@@ -37,8 +37,8 @@ class Classifier(object):
         self.keep_prob = tf.placeholder(tf.float32)
         h_fc1_drop = tf.nn.dropout(h_fc1, self.keep_prob)
 
-        W_fc2 = v.weight_variable([neurons_1, num_classes])
-        b_fc2 = v.bias_variable([num_classes])
+        W_fc2 = self.weight_variable([neurons_1, num_classes])
+        b_fc2 = self.bias_variable([num_classes])
 
         # softmax
         y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
@@ -46,23 +46,6 @@ class Classifier(object):
 
         return y_softmax
 
-    def conv_layer(self, inp, input_channels, output_channels):
-        W = v.weight_variable([5, 5, input_channels, output_channels])
-        b = v.bias_variable([output_channels])
-
-        h = tf.nn.relu(v.conv2d(inp, W) + b)
-        h_pool = v.max_pool(h)
-
-        return h_pool
-
-    def fc_layer(self, inp, length, num_neurons):
-        W = v.weight_variable([length, num_neurons])
-        b = v.bias_variable([num_neurons])
-
-        h_pool_flat = tf.reshape(inp, [-1, length])
-        h_fc = tf.nn.relu(tf.matmul(h_pool_flat, W) + b)
-
-        return h_fc
 
 model = '../models/classifier/model.ckpt'
 train_data = '../data/mnist/train'

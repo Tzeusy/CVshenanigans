@@ -4,7 +4,7 @@ import tensorflow as tf
 from functools import partial
 from pathlib import Path
 
-class Dataset(object):
+class Dataset:
     # converting data to tensors
     def _parse_function(filename, label, width, height):
         image_string = tf.read_file(filename)
@@ -42,7 +42,7 @@ class Dataset(object):
         dataset = Dataset._create_dataset(images, labels, parse)
         return dataset
 
-    def coordinate(src, width=280, height=280):
+    def localization(src, width=280, height=280):
         src = Path(src)
 
         image_list = []
