@@ -1,4 +1,3 @@
-import numpy as np
 import tensorflow as tf
 from cnn import CNN
 from dataset import Dataset
@@ -22,7 +21,8 @@ class Regressor(CNN):
             self.output = self.network(self.x_image, width, height, num_channels)
 
         diff = tf.abs(self.output - self.y)
-        self.loss = tf.reduce_mean(diff)
+        loss = tf.reduce_mean(diff)
+        self.train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
         self.accuracy = tf.reduce_mean(tf.cast(diff, tf.float32), axis=0)
 
         vars = [v for v in tf.global_variables() if v.name.startswith('regressor')]
@@ -61,8 +61,6 @@ def train():
     dataset = Dataset.localization(regressor.train_data)
     iterator = Dataset.iterator(dataset, batch_size=50)
 
-    train_step = tf.train.AdamOptimizer(1e-4).minimize(regressor.loss)
-
     saver = tf.train.Saver()
 
     with tf.Session() as sess:
@@ -78,7 +76,7 @@ def train():
                 regressor.y: y,
                 regressor.keep_prob: 0.5
             }
-            train_step.run(feed_dict=feed_dict)
+            regressor.train_step.run(feed_dict=feed_dict)
 
             if (i+1) % 100 == 0:
                 accuracy = regressor.accuracy.eval(feed_dict=feed_dict)

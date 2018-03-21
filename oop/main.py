@@ -88,7 +88,7 @@ def localize_and_classify(images):
     all_crops = []
     for i, image in enumerate(images):
         x, y = coordinates[i]
-        offsets = range(-6, 6)
+        offsets = range(-3, 4)
 
         crops = []
         for dx in offsets:

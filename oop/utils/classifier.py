@@ -1,4 +1,3 @@
-import numpy as np
 import tensorflow as tf
 from cnn import CNN
 from dataset import Dataset
@@ -20,10 +19,11 @@ class Classifier(CNN):
         #self.x_image = tf.reshape(x, [None, size, size, num_channels])
         self.x_image = tf.map_fn(tf.image.per_image_standardization, self.x)
 
-        with tf.variable_scope("classifier") as scope:
+        with tf.variable_scope('classifier') as scope:
             self.output = self.network(self.x_image, size, num_channels, num_classes)
 
-        self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.y, logits=self.output))
+        loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.y, logits=self.output))
+        self.train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
 
         correct_prediction = tf.equal(tf.argmax(self.output, 1), tf.argmax(self.y, 1))
         self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -66,8 +66,6 @@ def train():
     dataset = Dataset.mnist(classifier.train_data)
     iterator = Dataset.iterator(dataset, batch_size=50)
 
-    train_step = tf.train.AdamOptimizer(1e-4).minimize(classifier.loss)
-
     saver = tf.train.Saver()
 
     with tf.Session() as sess:
@@ -84,7 +82,7 @@ def train():
                 classifier.keep_prob: 0.5
             }
 
-            train_step.run(feed_dict=feed_dict)
+            classifier.train_step.run(feed_dict=feed_dict)
 
             if (i+1) % 100 == 0:
                 accuracy = classifier.accuracy.eval(feed_dict=feed_dict)
@@ -99,8 +97,6 @@ def test():
 
     dataset = Dataset.mnist(classifier.test_data)
     iterator = Dataset.iterator(dataset, batch_size=batch_size)
-
-    train_step = tf.train.AdamOptimizer(1e-4).minimize(classifier.loss)
 
     saver = tf.train.Saver()
 
