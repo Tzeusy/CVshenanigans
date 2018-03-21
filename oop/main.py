@@ -15,6 +15,7 @@ test_data = Path('data/localization/test')
 regressor_model = 'models/regressor/model.ckpt'
 classifier_model = 'models/classifier/model.ckpt'
 
+
 def show_results(images, coords):
     for image, coord in zip(images, coords):
         size = classifier.size

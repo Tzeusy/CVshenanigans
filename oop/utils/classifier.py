@@ -4,6 +4,7 @@ from dataset import Dataset
 
 
 class Classifier(CNN):
+    scope = 'classifier'
     model = '../models/classifier/model.ckpt'
     train_data = '../data/mnist/train'
     test_data = '../data/mnist/test'
@@ -19,7 +20,7 @@ class Classifier(CNN):
         #self.x_image = tf.reshape(x, [None, size, size, num_channels])
         self.x_image = tf.map_fn(tf.image.per_image_standardization, self.x)
 
-        with tf.variable_scope('classifier') as scope:
+        with tf.variable_scope(Classifier.scope) as scope:
             self.output = self.network(self.x_image, size, num_channels, num_classes)
 
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.y, logits=self.output))
@@ -28,7 +29,7 @@ class Classifier(CNN):
         correct_prediction = tf.equal(tf.argmax(self.output, 1), tf.argmax(self.y, 1))
         self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-        vars = [v for v in tf.global_variables() if v.name.startswith('classifier')]
+        vars = [v for v in tf.global_variables() if v.name.startswith(Classifier.scope)]
         self.saver = tf.train.Saver(vars)
 
     def network(self, x, size, initial_channels, num_classes):

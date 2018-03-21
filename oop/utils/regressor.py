@@ -3,6 +3,7 @@ from cnn import CNN
 from dataset import Dataset
 
 class Regressor(CNN):
+    scope = 'regressor'
     model = '../models/regressor/model.ckpt'
     train_data = '../data/localization/train'
     test_data = '../data/localization/test'
@@ -17,7 +18,7 @@ class Regressor(CNN):
 
         self.x_image = tf.map_fn(tf.image.per_image_standardization, self.x)
 
-        with tf.variable_scope('regressor') as scope:
+        with tf.variable_scope(Regressor.scope) as scope:
             self.output = self.network(self.x_image, width, height, num_channels)
 
         diff = tf.abs(self.output - self.y)
@@ -25,7 +26,7 @@ class Regressor(CNN):
         self.train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
         self.accuracy = tf.reduce_mean(tf.cast(diff, tf.float32), axis=0)
 
-        vars = [v for v in tf.global_variables() if v.name.startswith('regressor')]
+        vars = [v for v in tf.global_variables() if v.name.startswith(Regressor.scope)]
         self.saver = tf.train.Saver(vars)
 
     def network(self, x, width, height, initial_channels):

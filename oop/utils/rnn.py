@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.contrib import rnn
 
+
 class RNN:
     num_units = 128
 
