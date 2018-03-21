@@ -1,10 +1,19 @@
+import numpy as np
 import tensorflow as tf
 from cnn import CNN
 from dataset import Dataset
 
 
 class Classifier(CNN):
+    model = '../models/classifier/model.ckpt'
+    train_data = '../data/mnist/train'
+    test_data = '../data/mnist/test'
+
     def __init__(self, size=28, num_channels=1, num_classes=10):
+        self.size = size
+        self.num_channels = num_channels
+        self.num_classes = num_classes
+
         self.x = tf.placeholder(tf.float32, shape=[None, size, size, num_channels])
         self.y = tf.placeholder(tf.float32, shape=[None, num_classes])
 
@@ -18,6 +27,9 @@ class Classifier(CNN):
 
         correct_prediction = tf.equal(tf.argmax(self.output, 1), tf.argmax(self.y, 1))
         self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+        vars = [v for v in tf.global_variables() if v.name.startswith('classifier')]
+        self.saver = tf.train.Saver(vars)
 
     def network(self, x, size, initial_channels, num_classes):
         channels_1 = 32
@@ -47,17 +59,13 @@ class Classifier(CNN):
         return y_softmax
 
 
-model = '../models/classifier/model.ckpt'
-train_data = '../data/mnist/train'
-test_data = '../data/mnist/test'
-
 def train():
+    classifier = Classifier()
     num_iterations = 20000
 
-    dataset = Dataset.mnist(train_data)
+    dataset = Dataset.mnist(classifier.train_data)
     iterator = Dataset.iterator(dataset, batch_size=50)
 
-    classifier = Classifier()
     train_step = tf.train.AdamOptimizer(1e-4).minimize(classifier.loss)
 
     saver = tf.train.Saver()
@@ -82,23 +90,23 @@ def train():
                 accuracy = classifier.accuracy.eval(feed_dict=feed_dict)
                 print(i+1, accuracy)
 
-        print(saver.save(sess, model))
+        print(saver.save(sess, classifier.model))
 
 def test():
+    classifier = Classifier()
     batch_size = 1000
     num_iterations = 10000 // batch_size
 
-    dataset = Dataset.mnist(test_data)
+    dataset = Dataset.mnist(classifier.test_data)
     iterator = Dataset.iterator(dataset, batch_size=batch_size)
 
-    classifier = Classifier()
     train_step = tf.train.AdamOptimizer(1e-4).minimize(classifier.loss)
 
     saver = tf.train.Saver()
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        saver.restore(sess, model)
+        saver.restore(sess, classifier.model)
 
         sess.run(iterator.initializer)
         next_element = iterator.get_next()
@@ -114,7 +122,6 @@ def test():
             accuracies.append(accuracy)
 
         print(sum(accuracies)/len(accuracies))
-
 
 if __name__ == '__main__':
     #train()

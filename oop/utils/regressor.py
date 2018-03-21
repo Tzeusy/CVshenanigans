@@ -1,21 +1,32 @@
+import numpy as np
 import tensorflow as tf
 from cnn import CNN
 from dataset import Dataset
 
 class Regressor(CNN):
+    model = '../models/regressor/model.ckpt'
+    train_data = '../data/localization/train'
+    test_data = '../data/localization/test'
+
     def __init__(self, width=280, height=280, num_channels=1):
+        self.width = width
+        self.height = height
+        self.num_channels = num_channels
+
         self.x = tf.placeholder(tf.float32, shape=[None, width, height, num_channels])
         self.y = tf.placeholder(tf.float32, shape=[None, 2])
 
-        #x_image = tf.reshape(self.x, [None, width, height, num_channels])
         self.x_image = tf.map_fn(tf.image.per_image_standardization, self.x)
 
-        with tf.variable_scope("regressor") as scope:
+        with tf.variable_scope('regressor') as scope:
             self.output = self.network(self.x_image, width, height, num_channels)
 
         diff = tf.abs(self.output - self.y)
         self.loss = tf.reduce_mean(diff)
         self.accuracy = tf.reduce_mean(tf.cast(diff, tf.float32), axis=0)
+
+        vars = [v for v in tf.global_variables() if v.name.startswith('regressor')]
+        self.saver = tf.train.Saver(vars)
 
     def network(self, x, width, height, initial_channels):
         channels_1 = 32
@@ -42,17 +53,14 @@ class Regressor(CNN):
 
         return y_conv
 
-model = '../models/regressor/model.ckpt'
-train_data = '../data/localization/train'
-test_data = '../data/localization/test'
 
 def train():
+    regressor = Regressor()
     num_iterations = 20000
 
-    dataset = Dataset.localization(train_data)
+    dataset = Dataset.localization(regressor.train_data)
     iterator = Dataset.iterator(dataset, batch_size=50)
 
-    regressor = Regressor()
     train_step = tf.train.AdamOptimizer(1e-4).minimize(regressor.loss)
 
     saver = tf.train.Saver()
@@ -76,7 +84,8 @@ def train():
                 accuracy = regressor.accuracy.eval(feed_dict=feed_dict)
                 print(i+1, accuracy)
 
-        print(saver.save(sess, model))
+        print(saver.save(sess, regressor.model))
+
 
 if __name__ == '__main__':
     train()
