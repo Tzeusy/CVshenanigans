@@ -18,6 +18,7 @@ class RNN:
 
         with tf.variable_scope(RNN.scope) as scope:
             self.output = self.network(self.x, time_steps, num_classes)
+        self.softmax = tf.nn.softmax(self.output)
 
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.output, labels=self.y))
         self.train_step = tf.train.AdamOptimizer(1e-3).minimize(loss)
