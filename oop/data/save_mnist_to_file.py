@@ -11,14 +11,14 @@ def save_mnist(dataset, dst):
     label_file = open(Path(dst, "label.txt"), "w")
     generator = read(dataset=dataset, path=mnist_source)
 
-    count = [0 for i in range(10)]
+    count = [0 for _ in range(10)]
     for label, image in generator:
         filename = "{}_{:04d}.png".format(label, count[label])
         
         label_file.write("{},{}\n".format(filename, label))
         imwrite(str(Path(dst, filename)), image)
         
-        count[label]+= 1
+        count[label] += 1
 
     label_file.close()
 

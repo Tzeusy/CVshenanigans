@@ -4,8 +4,6 @@ import cv2
 import numpy as np
 from pathlib import Path
 
-random.seed(0)
-
 train_src = Path("mnist", "train")
 test_src = Path("mnist", "test")
 train_dst = Path("localization", "train")
@@ -13,9 +11,6 @@ test_dst = Path("localization", "test")
 
 BASE_WIDTH = 280
 BASE_HEIGHT = 280
-
-os.makedirs(train_dst, exist_ok=True)
-os.makedirs(test_dst, exist_ok=True)
 
 def make_file(dst, name, image):
     h, w = image.shape[:2]
@@ -37,5 +32,12 @@ def make_data(src, dst):
 
     label_file.close()
 
-make_data(src=train_src, dst=train_dst)
-make_data(src=test_src, dst=test_dst)
+
+if __name__ == '__main__':
+    os.makedirs(train_dst, exist_ok=True)
+    os.makedirs(test_dst, exist_ok=True)
+
+    random.seed(0)
+    
+    make_data(src=train_src, dst=train_dst)
+    make_data(src=test_src, dst=test_dst)
